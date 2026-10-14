@@ -1,19 +1,20 @@
 <div align="center">
   <img src="assets/icon/icon.png" width="112" alt="Logo JedaSuara">
   <h1>JedaSuara</h1>
-  <p><strong>Jurnal harian privat, tenang, dan sepenuhnya offline.</strong></p>
+  <p><strong>Jurnal harian privat dengan konteks lokasi dan cuaca.</strong></p>
   <p>
     <img src="https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white" alt="Flutter 3.x">
     <img src="https://img.shields.io/badge/Dart-3.12+-0175C2?logo=dart&logoColor=white" alt="Dart 3.12+">
     <img src="https://img.shields.io/badge/State-Riverpod-6B4EFF" alt="Riverpod">
-    <img src="https://img.shields.io/badge/Data-Local%20Only-2E7D32" alt="Local only">
+    <img src="https://img.shields.io/badge/Weather-Open--Meteo-2E7D32" alt="Open-Meteo">
   </p>
 </div>
 
 JedaSuara adalah aplikasi Flutter untuk menulis dan mengelola jurnal pribadi di
 perangkat. Seluruh catatan, sesi, preferensi tema, dan draft disimpan secara
-lokal menggunakan `SharedPreferences`. Aplikasi tidak membutuhkan akun online,
-server, maupun koneksi internet.
+lokal menggunakan `SharedPreferences`. Aplikasi tidak membutuhkan akun atau
+backend. Koneksi internet hanya digunakan saat pengguna meminta cuaca di
+lokasinya.
 
 > **Status:** aplikasi demonstrasi/pembelajaran. Autentikasi dan penyimpanan
 > lokal belum ditujukan sebagai perlindungan data sensitif untuk production.
@@ -30,6 +31,10 @@ server, maupun koneksi internet.
 - Statistik jurnal: total catatan, catatan minggu ini, jumlah kata, streak,
   distribusi mood, dan aktivitas tujuh hari terakhir.
 - Tema terang, gelap, dan mengikuti pengaturan sistem.
+- Lokasi dan cuaca yang bersifat opsional serta baru meminta permission setelah
+  pengguna menekan **Gunakan lokasi**.
+- Kondisi cuaca, suhu terasa, kelembapan, dan kecepatan angin dari Open-Meteo
+  tanpa API key.
 - Penggantian PIN serta penghapusan seluruh catatan dari menu pengaturan.
 - “Mood Scanner” dan “AI Penjaga” berbasis aturan lokal sebagai simulasi AI;
   tidak ada model AI atau API eksternal yang dipanggil.
@@ -51,6 +56,9 @@ PIN dapat diganti melalui menu **Pengaturan → Ganti PIN**.
 | State management & DI | `flutter_riverpod` |
 | Penyimpanan lokal | `shared_preferences` |
 | Format tanggal | `intl` |
+| Lokasi perangkat | `geolocator` |
+| Reverse geocoding | `geocoding` dengan layanan native perangkat |
+| Cuaca | Open-Meteo Forecast API melalui `http` |
 | Arsitektur | Feature-first Clean Architecture |
 | Testing | `flutter_test`, `mocktail` |
 | Platform | Android dan iOS; scaffold Web juga tersedia |
@@ -92,7 +100,8 @@ lib/
 │   ├── home/               # Shell dan bottom navigation
 │   ├── notes/              # CRUD, draft, mood, statistik
 │   ├── settings/           # Tema dan pengaturan data
-│   └── splash/             # Splash dan bootstrap
+│   ├── splash/             # Splash dan bootstrap
+│   └── weather/            # Lokasi, reverse geocoding, dan Open-Meteo
 ├── l10n/                   # Resource localization
 ├── app.dart
 └── main.dart
@@ -126,6 +135,10 @@ Untuk memilih perangkat tertentu:
 flutter run -d <device-id>
 ```
 
+Saat fitur cuaca pertama kali dipakai, izinkan akses lokasi **saat aplikasi
+digunakan**. Aplikasi tidak meminta lokasi background. Simulator iOS dapat
+memakai lokasi simulasi dari menu **Features → Location**.
+
 ## Quality gate
 
 Jalankan pemeriksaan berikut sebelum membuat commit atau pull request:
@@ -143,7 +156,8 @@ Test yang tersedia mencakup:
 - penyimpanan serta pemulihan catatan dan draft;
 - deteksi mood berbasis aturan;
 - statistik, streak, dan aktivitas tujuh hari terakhir;
-- pencarian dan filter mood pada widget.
+- pencarian dan filter mood pada widget;
+- parsing respons cuaca dan pemetaan kode kondisi WMO.
 
 Coverage dapat dibuat dengan:
 
@@ -169,7 +183,13 @@ Build iOS memerlukan konfigurasi signing yang valid pada Xcode.
 
 ## Data dan keamanan
 
-- Aplikasi berjalan offline dan tidak meminta permission internet.
+- Catatan, PIN, sesi, dan draft tetap berada di perangkat dan tidak dikirim ke
+  layanan cuaca.
+- Koordinat dikirim ke Open-Meteo hanya setelah pengguna menekan **Gunakan
+  lokasi** atau tombol refresh. Open-Meteo tidak memerlukan API key.
+- Nama wilayah diperoleh melalui reverse geocoding native Android/iOS. Jika
+  nama tidak tersedia, aplikasi menampilkan koordinat sebagai fallback.
+- Fitur jurnal tetap dapat digunakan tanpa izin lokasi dan tanpa internet.
 - Catatan disimpan sebagai JSON di `SharedPreferences` dan **tidak terenkripsi**.
 - Username, PIN, serta token sesi merupakan autentikasi demo lokal.
 - Jangan gunakan aplikasi ini untuk menyimpan data sangat sensitif tanpa
@@ -177,6 +197,12 @@ Build iOS memerlukan konfigurasi signing yang valid pada Xcode.
   encrypted database.
 - Menghapus data aplikasi dari pengaturan perangkat akan menghapus seluruh
   catatan, sesi, draft, dan preferensi lokal.
+
+## Sumber data terbuka
+
+- Cuaca: [Open-Meteo Forecast API](https://open-meteo.com/en/docs), tanpa API
+  key untuk penggunaan nonkomersial sesuai ketentuan layanan.
+- Kode kondisi cuaca menggunakan interpretasi WMO yang disediakan Open-Meteo.
 
 ## Dokumentasi proyek
 

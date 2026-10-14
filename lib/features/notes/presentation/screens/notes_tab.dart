@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/palette.dart';
 import '../../../../core/utils/date_format.dart';
+import '../../../weather/presentation/widgets/location_weather_card.dart';
 import '../../domain/entities/note.dart';
 import '../providers/notes_notifier.dart';
 import '../widgets/mood_filter_bar.dart';
@@ -88,6 +89,7 @@ class _NotesTabState extends ConsumerState<NotesTab> {
             ],
           ),
         ),
+        const LocationWeatherCard(),
         if (total > 0) ...[
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 4),
