@@ -1,0 +1,57 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'note_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$NoteModelImpl _$$NoteModelImplFromJson(Map<String, dynamic> json) =>
+    _$NoteModelImpl(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      content: json['content'] as String,
+      createdAt: json['createdAt'] as String,
+      updatedAt: json['updatedAt'] as String,
+      categoryId: json['categoryId'] as String? ?? '',
+      tags:
+          (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+          const [],
+      isFavorite: json['isFavorite'] as bool? ?? false,
+      isArchived: json['isArchived'] as bool? ?? false,
+      colorIndex: (json['colorIndex'] as num?)?.toInt() ?? 0,
+    );
+
+Map<String, dynamic> _$$NoteModelImplToJson(_$NoteModelImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'content': instance.content,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+      'categoryId': instance.categoryId,
+      'tags': instance.tags,
+      'isFavorite': instance.isFavorite,
+      'isArchived': instance.isArchived,
+      'colorIndex': instance.colorIndex,
+    };
+
+_$NoteCategoryModelImpl _$$NoteCategoryModelImplFromJson(
+  Map<String, dynamic> json,
+) => _$NoteCategoryModelImpl(
+  id: json['id'] as String,
+  name: json['name'] as String,
+  colorIndex: (json['colorIndex'] as num).toInt(),
+  iconIndex: (json['iconIndex'] as num).toInt(),
+  sortOrder: (json['sortOrder'] as num).toInt(),
+);
+
+Map<String, dynamic> _$$NoteCategoryModelImplToJson(
+  _$NoteCategoryModelImpl instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'name': instance.name,
+  'colorIndex': instance.colorIndex,
+  'iconIndex': instance.iconIndex,
+  'sortOrder': instance.sortOrder,
+};
